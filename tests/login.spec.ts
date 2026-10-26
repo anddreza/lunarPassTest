@@ -4,6 +4,10 @@ test.beforeEach(async ({ page }) => {
     await page.goto('/mission-control/login');
     // const email = 'buzz@lunarpass.dev';
     // const senha = 'pwd123';
+
+    const slogan = page.getByRole('heading', { name: 'Mission Control' })
+    await expect(slogan).toBeVisible()
+
 });
 
 test('slogan da homepage', async ({ page }) => {
@@ -36,6 +40,7 @@ test('slogan da homepage', async ({ page }) => {
 
 });
 
+//tentativa sozinha fazendo os testes
 const senhasInvalidas = [
     { senha: '123456', descricao: 'E-mail ou senha inválidos.' },
     { senha: '', descricao: 'Informe a senha' },
@@ -54,3 +59,35 @@ senhasInvalidas.forEach(({ senha, descricao }) => {
         await page.getByRole('button', { name: 'Entrar' }).click()
     });
 })
+
+
+test('não deve autenticar com senha incorreta', async ({ page }) => {
+
+    //  await page.goto('/mission-control/login');
+
+    await page.getByLabel('E-mail').fill(process.env.TEST_USER_EMAIL!)
+    await page.getByLabel('Senha').fill(process.env.TEST_USER_PASSWORD1!)
+
+    await page.getByRole('button', { name: 'Entrar' }).click()
+
+    //a forma como o curso ensina
+    const alert = page.locator('p[role=alert]')
+    await expect(alert).toHaveText('E-mail ou senha inválidos.')
+
+});
+
+test('não deve autenticar com email não cadastrado', async ({ page }) => {
+
+    //  await page.goto('/mission-control/login');
+
+    await page.getByLabel('E-mail').fill(process.env.TEST_USER_EMAIL1!)
+    await page.getByLabel('Senha').fill(process.env.TEST_USER_PASSWORD!)
+
+    await page.getByRole('button', { name: 'Entrar' }).click()
+
+    //a forma como o curso ensina a testar o email não cadastrado
+    const alert = page.locator('p[role=alert]')
+    await expect(alert).toHaveText('E-mail ou senha inválidos.')
+
+});
+
