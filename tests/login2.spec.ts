@@ -1,11 +1,14 @@
 import { test, expect } from '@playwright/test';
 import { LoginPage } from '../pages/login.page'
+import { Navbar } from '../pages/navbar'
 
 //deixa de ser uma const e pode acessar em todos os blocos 
 let loginPage: LoginPage
+let navbar: Navbar
 
 test.beforeEach(async ({ page }) => {
     loginPage = new LoginPage(page)
+    navbar = new Navbar(page)
 
     await loginPage.goto()
 })
@@ -13,7 +16,9 @@ test('deve autenticar no controle de missões', async ({ page }) => {
 
     await loginPage.login('buzz@lunarpass.dev', 'pwd123')
 
-    await loginPage.isLoggedUser()
+    await page.waitForTimeout(3000);
+    await expect(navbar.logout).toBeVisible()
+    
 });
 
 
